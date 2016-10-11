@@ -1,9 +1,10 @@
 class apache::mod::fcgid(
   $options = {},
+  $loadfile_extension = $::apache::loadfile_extension,
 ) {
   include ::apache
   if ($::osfamily == 'RedHat' and $::operatingsystemmajrelease == '7') or $::osfamily == 'FreeBSD' {
-    $loadfile_name = 'unixd_fcgid.load'
+    $loadfile_name = "unixd_fcgid${loadfile_extension}"
     $conf_name = 'unixd_fcgid.conf'
   } else {
     $loadfile_name = undef

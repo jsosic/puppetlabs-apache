@@ -1,8 +1,9 @@
+# Class: apache::mod::deflate
 class apache::mod::deflate (
   $types = [
     'text/html text/plain text/xml',
     'text/css',
-    'application/x-javascript application/javascript application/ecmascript',
+    'application/x-javascript application/javascript text/javascript application/ecmascript',
     'application/rss+xml',
     'application/json'
   ],

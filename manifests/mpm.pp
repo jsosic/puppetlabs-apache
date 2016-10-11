@@ -1,6 +1,7 @@
 define apache::mpm (
-  $lib_path       = $::apache::lib_path,
-  $apache_version = $::apache::apache_version,
+  $lib_path           = $::apache::lib_path,
+  $apache_version     = $::apache::apache_version,
+  $loadfile_extension = $::apache::loadfile_extension,
 ) {
   if ! defined(Class['apache']) {
     fail('You must include the apache base class before using any apache defined resources')
@@ -14,9 +15,9 @@ define apache::mpm (
   $_id   = "mpm_${mpm}_module"
 
   if versioncmp($apache_version, '2.4') >= 0 {
-    file { "${mod_dir}/${mpm}.load":
+    file { "${mod_dir}/${mpm}${loadfile_extension}":
       ensure  => file,
-      path    => "${mod_dir}/${mpm}.load",
+      path    => "${mod_dir}/${mpm}${loadfile_extension}",
       content => "LoadModule ${_id} ${_path}\n",
       require => [
         Package['httpd'],
@@ -38,9 +39,9 @@ define apache::mpm (
       }
 
       if versioncmp($apache_version, '2.4') >= 0 {
-        file { "${::apache::mod_enable_dir}/${mpm}.load":
+        file { "${::apache::mod_enable_dir}/${mpm}${loadfile_extension}":
           ensure  => link,
-          target  => "${::apache::mod_dir}/${mpm}.load",
+          target  => "${::apache::mod_dir}/${mpm}${loadfile_extension}",
           require => Exec["mkdir ${::apache::mod_enable_dir}"],
           before  => File[$::apache::mod_enable_dir],
           notify  => Class['apache::service'],

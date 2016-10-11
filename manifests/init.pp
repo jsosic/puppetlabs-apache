@@ -49,6 +49,8 @@ class apache (
   $vhost_enable_dir       = $::apache::params::vhost_enable_dir,
   $vhost_include_pattern  = $::apache::params::vhost_include_pattern,
   $mod_dir                = $::apache::params::mod_dir,
+  $mod_dir_load           = $::apache::params::mod_dir_load,
+  $loadfile_extension     = $::apache::params::loadfile_extension,
   $mod_enable_dir         = $::apache::params::mod_enable_dir,
   $mpm_module             = $::apache::params::mpm_module,
   $lib_path               = $::apache::params::lib_path,
@@ -81,6 +83,8 @@ class apache (
   $mime_types_additional  = $::apache::params::mime_types_additional,
   $file_mode              = $::apache::params::file_mode,
   $root_directory_options = $::apache::params::root_directory_options,
+  $maxopenfiles           = undef,
+  $umask                  = undef,
 ) inherits ::apache::params {
   validate_bool($default_vhost)
   validate_bool($default_ssl_vhost)
@@ -195,6 +199,7 @@ class apache (
 
   if $mod_enable_dir and ! defined(File[$mod_enable_dir]) {
     $mod_load_dir = $mod_enable_dir
+    $mod_conf_dir = $mod_enable_dir
     exec { "mkdir ${mod_enable_dir}":
       creates => $mod_enable_dir,
       require => Package['httpd'],
@@ -206,8 +211,23 @@ class apache (
       notify  => Class['Apache::Service'],
       require => Package['httpd'],
     }
+  } elsif $mod_dir_load and ! defined(File[$mod_dir_load]) {
+    $mod_load_dir = $mod_dir_load
+    $mod_conf_dir = $mod_dir
+    exec { "mkdir ${mod_dir_load}":
+      creates => $mod_dir_load,
+      require => Package['httpd'],
+    }
+    file { $mod_dir_load:
+      ensure  => directory,
+      recurse => true,
+      purge   => $purge_configs,
+      notify  => Class['Apache::Service'],
+      require => Package['httpd'],
+    }
   } else {
     $mod_load_dir = $mod_dir
+    $mod_conf_dir = $mod_dir
   }
 
   if ! defined(File[$vhost_dir]) {
@@ -412,4 +432,10 @@ class apache (
   # This anchor can be used as a reference point for things that need to happen *after*
   # all modules have been put in place.
   anchor { '::apache::modules_set_up': }
+
+  # Set maxopenfiles and umask
+  if ( $maxopenfiles != undef or $umask != undef ) {
+    include ::apache::env
+  }
+
 }
