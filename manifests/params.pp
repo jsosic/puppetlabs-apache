@@ -67,9 +67,14 @@ class apache::params inherits ::apache::version {
     $conf_dir             = "${httpd_dir}/conf"
     $confd_dir            = "${httpd_dir}/conf.d"
     $mod_dir              = $::apache::version::distrelease ? {
-      '7'     => "${httpd_dir}/conf.modules.d",
+      '7'     => "${httpd_dir}/conf.d",
       default => "${httpd_dir}/conf.d",
     }
+    $mod_dir_load         = $::apache::version::distrelease ? {
+      '7'     => "${httpd_dir}/conf.modules.d",
+      default => "${httpd_dir}/mod.d",
+    }
+    $loadfile_extension   = '.conf'
     $mod_enable_dir       = undef
     $vhost_dir            = "${httpd_dir}/conf.d"
     $vhost_enable_dir     = undef
@@ -207,6 +212,8 @@ class apache::params inherits ::apache::version {
     $conf_dir            = $httpd_dir
     $confd_dir           = "${httpd_dir}/conf.d"
     $mod_dir             = "${httpd_dir}/mods-available"
+    $mod_dir_load        = "${httpd_dir}/mods-enabled"
+    $loadfile_extension  = '.load'
     $mod_enable_dir      = "${httpd_dir}/mods-enabled"
     $vhost_dir           = "${httpd_dir}/sites-available"
     $vhost_enable_dir    = "${httpd_dir}/sites-enabled"
@@ -344,6 +351,8 @@ class apache::params inherits ::apache::version {
     $conf_dir         = $httpd_dir
     $confd_dir        = "${httpd_dir}/Includes"
     $mod_dir          = "${httpd_dir}/Modules"
+    $mod_dir_load     = "${httpd_dir}/Modules"
+    $loadfile_extension = '.load'
     $mod_enable_dir   = undef
     $vhost_dir        = "${httpd_dir}/Vhosts"
     $vhost_enable_dir = undef
@@ -384,7 +393,6 @@ class apache::params inherits ::apache::version {
       'wsgi'       => 'www/mod_wsgi',
       'dav_svn'    => 'devel/subversion',
       'xsendfile'  => 'www/mod_xsendfile',
-      'rpaf'       => 'www/mod_rpaf2',
       'shib2'      => 'security/shibboleth2-sp',
     }
     $mod_libs         = {

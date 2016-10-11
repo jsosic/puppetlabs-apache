@@ -1,12 +1,13 @@
 define apache::mod (
-  $package        = undef,
-  $package_ensure = 'present',
-  $lib            = undef,
-  $lib_path       = $::apache::lib_path,
-  $id             = undef,
-  $path           = undef,
-  $loadfile_name  = undef,
-  $loadfiles      = undef,
+  $package            = undef,
+  $package_ensure     = 'present',
+  $lib                = undef,
+  $lib_path           = $::apache::lib_path,
+  $id                 = undef,
+  $path               = undef,
+  $loadfile_name      = undef,
+  $loadfile_extension = $::apache::loadfile_extension,
+  $loadfiles          = undef,
 ) {
   if ! defined(Class['apache']) {
     fail('You must include the apache base class before using any apache defined resources')
@@ -14,7 +15,7 @@ define apache::mod (
 
   $mod = $name
   #include apache #This creates duplicate resources in rspec-puppet
-  $mod_dir = $::apache::mod_dir
+  $mod_dir = $::apache::mod_dir_load
 
   # Determine if we have special lib
   $mod_libs = $::apache::params::mod_libs
@@ -42,7 +43,7 @@ define apache::mod (
   if $loadfile_name {
     $_loadfile_name = $loadfile_name
   } else {
-    $_loadfile_name = "${mod}.load"
+    $_loadfile_name = "${mod}${loadfile_extension}"
   }
 
   # Determine if we have a package
@@ -66,7 +67,7 @@ define apache::mod (
     # the module gets installed.
     $package_before = $::osfamily ? {
       'freebsd' => [
-        File[$_loadfile_name],
+        File["_${_loadfile_name}"],
         File["${::apache::conf_dir}/${::apache::params::conf_file}"]
       ],
       default => [
@@ -85,7 +86,7 @@ define apache::mod (
     }
   }
 
-  file { $_loadfile_name:
+  file { "_${_loadfile_name}":
     ensure  => file,
     path    => "${mod_dir}/${_loadfile_name}",
     owner   => 'root',
@@ -110,7 +111,7 @@ define apache::mod (
       group   => $::apache::params::root_group,
       mode    => $::apache::file_mode,
       require => [
-        File[$_loadfile_name],
+        File["_${_loadfile_name}"],
         Exec["mkdir ${enable_dir}"],
       ],
       before  => File[$enable_dir],

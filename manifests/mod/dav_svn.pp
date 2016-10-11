@@ -1,5 +1,6 @@
 class apache::mod::dav_svn (
   $authz_svn_enabled = false,
+  $loadfile_extension = $::apache::loadfile_extension,
 ) {
   Class['::apache::mod::dav'] -> Class['::apache::mod::dav_svn']
   include ::apache
@@ -16,7 +17,7 @@ class apache::mod::dav_svn (
   if $::osfamily == 'Debian' and ($::operatingsystemmajrelease != '6' and $::operatingsystemmajrelease != '10.04' and $::operatingsystemrelease != '10.04' and $::operatingsystemmajrelease != '16.04') {
     $loadfile_name = undef
   } else {
-    $loadfile_name = 'dav_svn_authz_svn.load'
+    $loadfile_name = "dav_svn_authz_svn${loadfile_extension}"
   }
 
   if $authz_svn_enabled {

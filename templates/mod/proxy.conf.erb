@@ -8,7 +8,7 @@
   # Internet at large.
   ProxyRequests <%= @proxy_requests %>
 
-  <% if @proxy_requests != 'Off' or ( @allow_from and ! @allow_from.empty? ) -%>
+<% if @proxy_requests != 'Off' or ( @allow_from and ! @allow_from.empty? ) -%>
   <Proxy *>
     <%- if scope.function_versioncmp([@_apache_version, '2.4']) >= 0 -%>
     Require ip <%= Array(@allow_from).join(" ") %>
@@ -18,7 +18,7 @@
     Allow from <%= Array(@allow_from).join(" ") %>
     <%- end -%>
   </Proxy>
-  <% end -%>
+<% end -%>
 
   # Enable/disable the handling of HTTP/1.1 "Via:" headers.
   # ("Full" adds the server version; "Block" removes all outgoing Via: headers)

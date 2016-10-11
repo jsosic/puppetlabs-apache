@@ -1,13 +1,15 @@
 define apache::mpm (
-  $lib_path       = $::apache::lib_path,
-  $apache_version = $::apache::apache_version,
+  $lib_path           = $::apache::lib_path,
+  $apache_version     = $::apache::apache_version,
+  $loadfile_extension = $::apache::loadfile_extension,
 ) {
   if ! defined(Class['apache']) {
     fail('You must include the apache base class before using any apache defined resources')
   }
 
-  $mpm     = $name
-  $mod_dir = $::apache::mod_dir
+  $mpm          = $name
+  $mod_dir      = $::apache::mod_dir
+  $mod_dir_load = $::apache::mod_dir_load
 
   $_lib  = "mod_mpm_${mpm}.so"
   $_path = "${lib_path}/${_lib}"
@@ -29,20 +31,20 @@ define apache::mpm (
       }
     }
   } else {
-      if versioncmp($apache_version, '2.4') >= 0 {
-        file { "${mod_dir}/${mpm}.load":
-          ensure  => file,
-          path    => "${mod_dir}/${mpm}.load",
-          content => "LoadModule ${_id} ${_path}\n",
-          require => [
-            Package['httpd'],
-            Exec["mkdir ${mod_dir}"],
-          ],
-          before  => File[$mod_dir],
-          notify  => Class['apache::service'],
-        }
+    if versioncmp($apache_version, '2.4') >= 0 {
+      file { "${mod_dir_load}/${mpm}${loadfile_extension}":
+        ensure  => file,
+        path    => "${mod_dir_load}/${mpm}${loadfile_extension}",
+        content => "LoadModule ${_id} ${_path}\n",
+        require => [
+          Package['httpd'],
+          Exec["mkdir ${mod_dir_load}"],
+        ],
+        before  => File[$mod_dir_load],
+        notify  => Class['apache::service'],
       }
     }
+  }
 
   case $::osfamily {
     'debian': {
@@ -55,9 +57,9 @@ define apache::mpm (
       }
 
       if versioncmp($apache_version, '2.4') >= 0 {
-        file { "${::apache::mod_enable_dir}/${mpm}.load":
+        file { "${::apache::mod_enable_dir}/${mpm}${loadfile_extension}":
           ensure  => link,
-          target  => "${::apache::mod_dir}/${mpm}.load",
+          target  => "${::apache::mod_dir}/${mpm}${loadfile_extension}",
           require => Exec["mkdir ${::apache::mod_enable_dir}"],
           before  => File[$::apache::mod_enable_dir],
           notify  => Class['apache::service'],
