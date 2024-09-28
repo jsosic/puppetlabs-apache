@@ -296,7 +296,7 @@ define apache::vhost(
       'env'         => $access_log_env_var
     }]
   } elsif $access_logs {
-    if !is_array($access_logs) {
+    if !users_is_array($access_logs) {
       fail("Apache::Vhost[${name}]: access_logs must be an array of hashes")
     }
     $_access_logs = $access_logs
@@ -448,7 +448,7 @@ define apache::vhost(
 
   ## Create a default directory list if none defined
   if $directories {
-    if !is_hash($directories) and !(is_array($directories) and is_hash($directories[0])) {
+    if !is_hash($directories) and !(users_is_array($directories) and is_hash($directories[0])) {
       fail("Apache::Vhost[${name}]: 'directories' must be either a Hash or an Array of Hashes")
     }
     $_directories = $directories
@@ -481,7 +481,7 @@ define apache::vhost(
   if $modsec_disable_ids {
     if is_hash($modsec_disable_ids) {
       $_modsec_disable_ids = $modsec_disable_ids
-    } elsif is_array($modsec_disable_ids) {
+    } elsif users_is_array($modsec_disable_ids) {
       $_modsec_disable_ids = { '.*' => $modsec_disable_ids }
     } else {
       fail("Apache::Vhost[${name}]: 'modsec_disable_ids' must be either a Hash of location/IDs or an Array of IDs")
@@ -491,7 +491,7 @@ define apache::vhost(
   if $modsec_disable_msgs {
     if is_hash($modsec_disable_msgs) {
       $_modsec_disable_msgs = $modsec_disable_msgs
-    } elsif is_array($modsec_disable_msgs) {
+    } elsif users_is_array($modsec_disable_msgs) {
       $_modsec_disable_msgs = { '.*' => $modsec_disable_msgs }
     } else {
       fail("Apache::Vhost[${name}]: 'modsec_disable_msgs' must be either a Hash of location/Msgs or an Array of Msgs")
@@ -501,7 +501,7 @@ define apache::vhost(
   if $modsec_disable_tags {
     if is_hash($modsec_disable_tags) {
       $_modsec_disable_tags = $modsec_disable_tags
-    } elsif is_array($modsec_disable_tags) {
+    } elsif users_is_array($modsec_disable_tags) {
       $_modsec_disable_tags = { '.*' => $modsec_disable_tags }
     } else {
       fail("Apache::Vhost[${name}]: 'modsec_disable_tags' must be either a Hash of location/Tags or an Array of Tags")

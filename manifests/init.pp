@@ -263,7 +263,7 @@ class apache (
   if $::apache::conf_dir and $::apache::params::conf_file {
     if $::osfamily == 'gentoo' {
       $error_documents_path = '/usr/share/apache2/error'
-      if is_array($default_mods) {
+      if users_is_array($default_mods) {
         if versioncmp($apache_version, '2.4') >= 0 {
           if defined('apache::mod::ssl') {
             ::portage::makeconf { 'apache2_modules':
@@ -327,7 +327,7 @@ class apache (
 
     # preserve back-wards compatibility to the times when default_mods was
     # only a boolean value. Now it can be an array (too)
-    if is_array($default_mods) {
+    if users_is_array($default_mods) {
       class { '::apache::default_mods':
         all  => false,
         mods => $default_mods,

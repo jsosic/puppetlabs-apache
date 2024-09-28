@@ -6,10 +6,10 @@ class apache::mod::negotiation (
                         'zh-TW' ],
 ) {
   include ::apache
-  if !is_array($force_language_priority) and !is_string($force_language_priority) {
+  if !users_is_array($force_language_priority) and !is_string($force_language_priority) {
     fail('force_languague_priority must be a string or array of strings')
   }
-  if !is_array($language_priority) and !is_string($language_priority) {
+  if !users_is_array($language_priority) and !is_string($language_priority) {
     fail('force_languague_priority must be a string or array of strings')
   }
 
