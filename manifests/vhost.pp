@@ -178,51 +178,6 @@ define apache::vhost(
 
   $apache_name = $::apache::apache_name
 
-  validate_re($ensure, '^(present|absent)$',
-  "${ensure} is not supported for ensure.
-  Allowed values are 'present' and 'absent'.")
-  validate_re($suphp_engine, '^(on|off)$',
-  "${suphp_engine} is not supported for suphp_engine.
-  Allowed values are 'on' and 'off'.")
-  validate_bool($ip_based)
-  validate_bool($access_log)
-  validate_bool($error_log)
-  if $modsec_audit_log != undef {
-    validate_bool($modsec_audit_log)
-  }
-  validate_bool($ssl)
-  validate_bool($default_vhost)
-  validate_bool($ssl_proxyengine)
-  if $ssl_stapling != undef {
-    validate_bool($ssl_stapling)
-  }
-  if $rewrites {
-    validate_array($rewrites)
-    unless empty($rewrites) {
-      $rewrites_flattened = delete_undef_values(flatten([$rewrites]))
-      validate_hash($rewrites_flattened[0])
-    }
-  }
-
-  # Input validation begins
-
-  if $suexec_user_group {
-    validate_re($suexec_user_group, '^[\w-]+ [\w-]+$',
-    "${suexec_user_group} is not supported for suexec_user_group.  Must be 'user group'.")
-  }
-
-  if $wsgi_pass_authorization {
-    validate_re(downcase($wsgi_pass_authorization), '^(on|off)$',
-    "${wsgi_pass_authorization} is not supported for wsgi_pass_authorization.
-    Allowed values are 'on' and 'off'.")
-  }
-
-  if $wsgi_chunked_request {
-    validate_re(downcase($wsgi_chunked_request), '^(on|off)$',
-    "${wsgi_chunked_request} is not supported for wsgi_chunked_request.
-    Allowed values are 'on' and 'off'.")
-  }
-
   # Deprecated backwards-compatibility
   if $rewrite_base {
     warning('Apache::Vhost: parameter rewrite_base is deprecated in favor of rewrites')
@@ -232,30 +187,6 @@ define apache::vhost(
   }
   if $rewrite_cond {
     warning('Apache::Vhost parameter rewrite_cond is deprecated in favor of rewrites')
-  }
-
-  if $wsgi_script_aliases {
-    validate_hash($wsgi_script_aliases)
-  }
-  if $wsgi_script_aliases_match {
-    validate_hash($wsgi_script_aliases_match)
-  }
-  if $wsgi_daemon_process_options {
-    validate_hash($wsgi_daemon_process_options)
-  }
-  if $wsgi_import_script_options {
-    validate_hash($wsgi_import_script_options)
-  }
-  if $itk {
-    validate_hash($itk)
-  }
-
-  validate_re($logroot_ensure, '^(directory|absent)$',
-  "${logroot_ensure} is not supported for logroot_ensure.
-  Allowed values are 'directory' and 'absent'.")
-
-  if $log_level {
-    validate_apache_log_level($log_level)
   }
 
   if $access_log_file and $access_log_pipe {
@@ -268,49 +199,6 @@ define apache::vhost(
 
   if $modsec_audit_log_file and $modsec_audit_log_pipe {
     fail("Apache::Vhost[${name}]: 'modsec_audit_log_file' and 'modsec_audit_log_pipe' cannot be defined at the same time")
-  }
-
-  if $fallbackresource {
-    validate_re($fallbackresource, '^/|disabled', 'Please make sure fallbackresource starts with a / (or is "disabled")')
-  }
-
-  if $custom_fragment {
-    validate_string($custom_fragment)
-  }
-
-  if $allow_encoded_slashes {
-    validate_re($allow_encoded_slashes, '(^on$|^off$|^nodecode$)', "${allow_encoded_slashes} is not permitted for allow_encoded_slashes. Allowed values are 'on', 'off' or 'nodecode'.")
-  }
-
-  validate_bool($auth_kerb)
-
-  # Validate the docroot as a string if:
-  # - $manage_docroot is true
-  if $manage_docroot {
-    validate_string($docroot)
-  }
-
-  if $ssl_proxy_verify {
-    validate_re($ssl_proxy_verify,'^(none|optional|require|optional_no_ca)$',"${ssl_proxy_verify} is not permitted for ssl_proxy_verify. Allowed values are 'none', 'optional', 'require' or 'optional_no_ca'.")
-  }
-
-  if $ssl_proxy_check_peer_cn {
-    validate_re($ssl_proxy_check_peer_cn,'(^on$|^off$)',"${ssl_proxy_check_peer_cn} is not permitted for ssl_proxy_check_peer_cn. Allowed values are 'on' or 'off'.")
-  }
-  if $ssl_proxy_check_peer_name {
-    validate_re($ssl_proxy_check_peer_name,'(^on$|^off$)',"${ssl_proxy_check_peer_name} is not permitted for ssl_proxy_check_peer_name. Allowed values are 'on' or 'off'.")
-  }
-
-  if $ssl_proxy_check_peer_expire {
-    validate_re($ssl_proxy_check_peer_expire,'(^on$|^off$)',"${ssl_proxy_check_peer_expire} is not permitted for ssl_proxy_check_peer_expire. Allowed values are 'on' or 'off'.")
-  }
-
-  if $keepalive {
-    validate_re($keepalive,'(^on$|^off$)',"${keepalive} is not permitted for keepalive. Allowed values are 'on' or 'off'.")
-  }
-
-  if $passenger_sticky_sessions {
-    validate_bool($passenger_sticky_sessions)
   }
 
   # Input validation ends

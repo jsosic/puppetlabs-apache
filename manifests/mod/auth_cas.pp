@@ -25,8 +25,6 @@ class apache::mod::auth_cas (
   $suppress_warning          = false,
 ) inherits ::apache::params {
 
-  validate_string($cas_login_url, $cas_validate_url, $cas_cookie_path)
-
   if $::osfamily == 'RedHat' and ! $suppress_warning {
     warning('RedHat distributions do not have Apache mod_auth_cas in their default package repositories.')
   }

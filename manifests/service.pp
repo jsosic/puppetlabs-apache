@@ -27,9 +27,6 @@ class apache::service (
   if ! defined(Class['apache::params']) {
     fail('You must include the apache::params class before using any apache defined resources')
   }
-  validate_bool($service_enable)
-  validate_bool($service_manage)
-
   case $service_ensure {
     true, false, 'running', 'stopped': {
       $_service_ensure = $service_ensure

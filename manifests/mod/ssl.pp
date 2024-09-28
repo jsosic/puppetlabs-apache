@@ -49,8 +49,6 @@ class apache::mod::ssl (
     }
   }
 
-  validate_bool($ssl_compression)
-
   if is_bool($ssl_honorcipherorder) {
     $_ssl_honorcipherorder = $ssl_honorcipherorder
   } else {
@@ -67,12 +65,6 @@ class apache::mod::ssl (
     'freebsd' => '/var/run/ssl_scache(512000)',
     'gentoo'  => '/var/run/ssl_scache(512000)',
     'Suse'    => '/var/lib/apache2/ssl_scache(512000)'
-  }
-
-  validate_bool($ssl_stapling)
-
-  if $ssl_stapling_return_errors != undef {
-    validate_bool($ssl_stapling_return_errors)
   }
 
   $stapling_cache = $::osfamily ? {

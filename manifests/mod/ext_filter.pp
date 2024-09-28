@@ -2,9 +2,6 @@ class apache::mod::ext_filter(
   $ext_filter_define = undef
 ) {
   include ::apache
-  if $ext_filter_define {
-    validate_hash($ext_filter_define)
-  }
 
   ::apache::mod { 'ext_filter': }
 

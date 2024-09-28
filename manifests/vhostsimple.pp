@@ -74,7 +74,6 @@ define apache::vhostsimple(
   ) {
 
   $apache_name = $::apache::params::apache_name
-  validate_re($ensure, '^(present|absent)$', "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
   if $ssl == true { include ::apache::mod::ssl }
 
 

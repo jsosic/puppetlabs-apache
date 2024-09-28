@@ -11,9 +11,6 @@ class apache::mod::ldap (
 ){
   include ::apache
   $_apache_version = pick($apache_version, $apache::apache_version)
-  if ($ldap_trusted_global_cert_file) {
-    validate_string($ldap_trusted_global_cert_type)
-  }
   ::apache::mod { 'ldap':
     package => $package_name,
   }

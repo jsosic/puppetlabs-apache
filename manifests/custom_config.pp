@@ -18,11 +18,8 @@ define apache::custom_config (
     fail('One of $content and $source must be specified.')
   }
 
-  validate_re($ensure, '^(present|absent)$',
   "${ensure} is not supported for ensure.
   Allowed values are 'present' and 'absent'.")
-
-  validate_bool($verify_config)
 
   if $filename {
     $_filename = $filename

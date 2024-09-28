@@ -29,12 +29,6 @@ class apache::mod::passenger (
   $mod_path                         = undef,
 ) inherits ::apache::params {
   include ::apache
-  if $passenger_spawn_method {
-    validate_re($passenger_spawn_method, '(^smart$|^direct$|^smart-lv2$|^conservative$)', "${passenger_spawn_method} is not permitted for passenger_spawn_method. Allowed values are 'smart', 'direct', 'smart-lv2', or 'conservative'.")
-  }
-  if $passenger_log_file {
-    validate_absolute_path($passenger_log_file)
-  }
 
   # Managed by the package, but declare it to avoid purging
   if $passenger_conf_package_file {

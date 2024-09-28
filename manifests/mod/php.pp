@@ -21,7 +21,6 @@ class apache::mod::php (
   else {
     fail('apache::mod::php requires apache::mod::prefork or apache::mod::itk; please enable mpm_module => \'prefork\' or mpm_module => \'itk\' on Class[\'apache\']')
   }
-  validate_array($extensions)
 
   if $source and ($content or $template != 'apache/mod/php.conf.erb') {
     warning('source and content or template parameters are provided. source parameter will be used')

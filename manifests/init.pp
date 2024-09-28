@@ -91,26 +91,10 @@ class apache (
   $maxopenfiles           = undef,
   $umask                  = undef,
 ) inherits ::apache::params {
-  validate_bool($default_vhost)
-  validate_bool($default_ssl_vhost)
-  validate_bool($default_confd_files)
-  # true/false is sufficient for both ensure and enable
-  validate_bool($service_enable)
-  validate_bool($service_manage)
-  validate_bool($use_optional_includes)
-  validate_bool($root_directory_secured)
 
   $valid_mpms_re = $apache_version ? {
     '2.4'   => '(event|itk|peruser|prefork|worker)',
     default => '(event|itk|prefork|worker)'
-  }
-
-  if $mpm_module and $mpm_module != 'false' { # lint:ignore:quoted_booleans
-    validate_re($mpm_module, $valid_mpms_re)
-  }
-
-  if $allow_encoded_slashes {
-    validate_re($allow_encoded_slashes, '(^on$|^off$|^nodecode$)', "${allow_encoded_slashes} is not permitted for allow_encoded_slashes. Allowed values are 'on', 'off' or 'nodecode'.")
   }
 
   # NOTE: on FreeBSD it's mpm module's responsibility to install httpd package.
@@ -125,11 +109,9 @@ class apache (
       notify => Class['Apache::Service'],
     }
   }
-  validate_re($sendfile, [ '^[oO]n$' , '^[oO]ff$' ])
 
   # declare the web server user and group
   # Note: requiring the package means the package ought to create them and not puppet
-  validate_bool($manage_user)
   if $manage_user {
     user { $user:
       ensure  => present,
@@ -137,15 +119,12 @@ class apache (
       require => Package['httpd'],
     }
   }
-  validate_bool($manage_group)
   if $manage_group {
     group { $group:
       ensure  => present,
       require => Package['httpd'],
     }
   }
-
-  validate_apache_log_level($log_level)
 
   class { '::apache::service':
     service_name    => $service_name,
@@ -314,10 +293,6 @@ class apache (
     $apxs_workaround = $::osfamily ? {
       'freebsd' => true,
       default   => false
-    }
-
-    if $rewrite_lock {
-      validate_absolute_path($rewrite_lock)
     }
 
     # Template uses:

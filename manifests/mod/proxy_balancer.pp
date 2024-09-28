@@ -4,9 +4,6 @@ class apache::mod::proxy_balancer(
   $allow_from     = ['127.0.0.1','::1'],
   $apache_version = $::apache::apache_version,
 ) {
-  validate_bool($manager)
-  validate_string($manager_path)
-  validate_array($allow_from)
 
   include ::apache::mod::proxy
   include ::apache::mod::proxy_http

@@ -5,7 +5,6 @@ class apache::mod::dir (
   $dir     = 'public_html',
   $indexes = ['index.html','index.html.var','index.cgi','index.pl','index.php','index.xhtml'],
 ) {
-  validate_array($indexes)
   include ::apache
   ::apache::mod { 'dir': }
 

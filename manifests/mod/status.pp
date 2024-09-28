@@ -33,8 +33,6 @@ class apache::mod::status (
 ) inherits ::apache::params {
   include ::apache
   $_apache_version = pick($apache_version, $apache::apache_version)
-  validate_array($allow_from)
-  validate_re(downcase($extended_status), '^(on|off)$', "${extended_status} is not supported for extended_status.  Allowed values are 'On' and 'Off'.")
   ::apache::mod { 'status': }
   # Template uses $allow_from, $extended_status, $_apache_version, $status_path
   file { 'status.conf':
