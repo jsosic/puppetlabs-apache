@@ -21,7 +21,8 @@ define apache::mod (
   $mod_libs = $::apache::params::mod_libs
   if $lib {
     $_lib = $lib
-  } elsif has_key($mod_libs, $mod) { # 2.6 compatibility hack
+#  } elsif has_key($mod_libs, $mod) { # 2.6 compatibility hack
+  } elsif $mod in $mod_libs { # 2.6 compatibility hack
     $_lib = $mod_libs[$mod]
   } else {
     $_lib = "mod_${mod}.so"
@@ -50,7 +51,8 @@ define apache::mod (
   $mod_packages = $::apache::params::mod_packages
   if $package {
     $_package = $package
-  } elsif has_key($mod_packages, $mod) { # 2.6 compatibility hack
+#  } elsif has_key($mod_packages, $mod) { # 2.6 compatibility hack
+  } elsif $mod in $mod_packages { # 2.6 compatibility hack
     if ($::apache::apache_version == '2.4' and $::operatingsystem =~ /^[Aa]mazon$/) {
       # On amazon linux we need to prefix our package name with mod24 instead of mod to support apache 2.4
       $_package = regsubst($mod_packages[$mod],'^(mod_)?(.*)','mod24_\2')
